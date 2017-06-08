@@ -5734,6 +5734,13 @@ BOOST_AUTO_TEST_CASE(no_unused_inline_asm)
 	CHECK_SUCCESS_NO_WARNINGS(text);
 }
 
+BOOST_AUTO_TEST_CASE(returndatacopy_as_variable)
+{
+	char const* text = R"(
+		contract c { function f() { uint returndatasize; assembly { returndatasize }}}
+	)";
+	CHECK_WARNING(text, "shadowed by an insturction of the same name");
+}
 
 
 BOOST_AUTO_TEST_SUITE_END()
