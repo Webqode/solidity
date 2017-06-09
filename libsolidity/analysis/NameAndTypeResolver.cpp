@@ -232,6 +232,19 @@ vector<Declaration const*> NameAndTypeResolver::cleanedDeclarations(
 	return uniqueFunctions;
 }
 
+void NameAndTypeResolver::warnVariablesNamedLikeInstructions(void)
+{
+	auto declarations = nameFromCurrentScope("returndatasize");
+	for (Declaration const* const declaration : declarations)
+	{
+		solAssert(!!declaration, "");
+		m_errorReporter.warning(
+			declaration->location(),
+			"Variable is shadowed in an inline assembly by an insturction of the same name"
+		);
+	}
+}
+
 bool NameAndTypeResolver::resolveNamesAndTypesInternal(ASTNode& _node, bool _resolveInsideCode)
 {
 	if (ContractDefinition* contract = dynamic_cast<ContractDefinition*>(&_node))

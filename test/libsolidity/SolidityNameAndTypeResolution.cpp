@@ -5744,7 +5744,7 @@ BOOST_AUTO_TEST_CASE(returndatacopy_as_variable)
 	char const* text = R"(
 		contract c { function f() { uint returndatasize; assembly { returndatasize }}}
 	)";
-	CHECK_WARNING_ALLOW_MULTI(text, "shadowed by an insturction of the same name");
+	CHECK_WARNING_ALLOW_MULTI(text, "Variable is shadowed in an inline assembly by an insturction of the same name");
 }
 
 
