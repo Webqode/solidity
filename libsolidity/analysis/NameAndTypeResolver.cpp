@@ -26,6 +26,8 @@
 #include <libsolidity/analysis/TypeChecker.h>
 #include <libsolidity/interface/ErrorReporter.h>
 
+#include <boost/algorithm/string.hpp>
+
 using namespace std;
 
 namespace dev
@@ -234,14 +236,19 @@ vector<Declaration const*> NameAndTypeResolver::cleanedDeclarations(
 
 void NameAndTypeResolver::warnVariablesNamedLikeInstructions(void)
 {
-	auto declarations = nameFromCurrentScope("returndatasize");
-	for (Declaration const* const declaration : declarations)
+	for (auto const& instruction : c_instructions)
 	{
-		solAssert(!!declaration, "");
-		m_errorReporter.warning(
-			declaration->location(),
-			"Variable is shadowed in an inline assembly by an insturction of the same name"
-		);
+		string instructionName{instruction.first}; // needs to copy because making it lower case.
+		boost::algorithm::to_lower(instructionName);
+		auto declarations = nameFromCurrentScope(instructionName);
+		for (Declaration const* const declaration : declarations)
+		{
+			solAssert(!!declaration, "");
+			m_errorReporter.warning(
+				declaration->location(),
+				"Variable is shadowed in an inline assembly by an insturction of the same name"
+			);
+		}
 	}
 }
 
